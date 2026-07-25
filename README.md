@@ -12,12 +12,13 @@ graph: storage first, then MCP layer, then agents, then orchestrator, then
 gate, then dashboard, then real ingress adapters, then calibration, then a
 dedicated security pass.
 
-## Status: Phase 0–2 Complete ✓
+## Status: Phase 0–3 Complete ✓
 
 - [x] **Phase 0** — Monorepo scaffold, shared types package, local infra (Docker Compose: Postgres+pgvector, Redis)
 - [x] **Phase 1** — Persistent Context Engine (schema + ContextService + REST API)
 - [x] **Phase 2** — MCP Server Layer (all 6, with stubs and mock data)
-- [ ] Phase 3 — Specialized Agents (next)
+- [x] **Phase 3** — Specialized Agents (6 domain agents + Challenger + Calibration stub)
+- [ ] Phase 4 — Planner Agent (next)
 
 ## Getting started
 
@@ -145,12 +146,12 @@ infra/docker-compose.yml         Phase 0 — Postgres+pgvector, Redis
 
 | Phase | Status | What |
 |---|---|---|
-| 0 | ✅ Done | Repo scaffold, shared types, local infra *(this)* |
+| 0 | ✅ Done | Repo scaffold, shared types, local infra |
 | 1 | ✅ Done | Persistent Context Engine (schema + `ContextService`) |
 | 2 | ✅ Done | MCP Server Layer (all 6, with stubs) |
-| 3 | ⏳ Next | Specialized Agents (deterministic ones — Risk, Reconciliation — first) |
-| 4 | ⏳ Todo | Planner Agent |
-| 5 | ⏳ Todo | Confidence Gate + Challenger Agent |
+| 3 | ✅ Done | Specialized Agents (6 domain + Challenger + Calibration stub) |
+| 4 | ⏳ Next | Planner Agent |
+| 5 | ⏳ Todo | Confidence Gate |
 | 6 | ⏳ Todo | Ingress Bus (real adapters) |
 | 7 | ⏳ Todo | Dashboard backend + frontend |
 | 8 | ⏳ Todo | Calibration Agent + feedback loop |

@@ -6,8 +6,7 @@
     "composite": true
   },
   "references": [
-    { "path": "../../../packages/shared-types" },
-    { "path": "../base" }
+    { "path": "../../../packages/shared-types" }
   ],
   "include": ["src/**/*"]
 }

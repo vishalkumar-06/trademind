@@ -30,7 +30,7 @@ export async function writeToContextEngine(
   const fullResult: AgentResult = {
     id: result.id || uuidv4(),
     workflow_id: result.workflow_id || "",
-    agent_type: result.agent_type || "unknown",
+    agent_type: result.agent_type || "communication",
     result_data: result.result_data || {},
     confidence_score: result.confidence_score || 0.5,
     challenged: result.challenged || false,

@@ -2,7 +2,7 @@
   "name": "trademind-ai",
   "private": true,
   "version": "0.1.0",
-  "description": "TradeMind AI \u2014 multi-agent trading copilot (Planner \u2192 Specialized Agents \u2192 MCP Tool Layer \u2192 Persistent Context Engine \u2192 Trader Dashboard)",
+  "description": "TradeMind AI — multi-agent trading copilot (Planner → Specialized Agents → MCP Tool Layer → Persistent Context Engine → Trader Dashboard)",
   "workspaces": [
     "packages/*",
     "services/*",
@@ -20,10 +20,21 @@
     "infra:up": "docker compose -f infra/docker-compose.yml up -d",
     "infra:down": "docker compose -f infra/docker-compose.yml down",
     "infra:logs": "docker compose -f infra/docker-compose.yml logs -f",
-    "migrate": "npm run migrate --workspace=@trademind/context-engine"
+    "migrate": "npm run migrate --workspace=@trademind/context-engine",
+    "dev:risk-agent": "npm run dev --workspace=@trademind/risk-analysis-agent",
+    "dev:reconciliation-agent": "npm run dev --workspace=@trademind/trade-reconciliation-agent",
+    "dev:portfolio-agent": "npm run dev --workspace=@trademind/portfolio-agent",
+    "dev:market-agent": "npm run dev --workspace=@trademind/market-intelligence-agent",
+    "dev:compliance-agent": "npm run dev --workspace=@trademind/compliance-agent",
+    "dev:communication-agent": "npm run dev --workspace=@trademind/communication-agent",
+    "dev:challenger-agent": "npm run dev --workspace=@trademind/challenger-agent"
   },
   "devDependencies": {
-    "typescript": "^5.5.4",
-    "@types/node": "^20.14.10"
+    "@types/node": "^20.14.10",
+    "@types/uuid": "^10.0.0",
+    "typescript": "^5.5.4"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.32.1"
   }
 }

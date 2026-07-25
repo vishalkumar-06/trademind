@@ -6,7 +6,7 @@ import {
   ExecutionPlan,
   ExecutionStep,
 } from "@trademind/shared-types";
-import { query } from "../db/connection.js";
+import { query } from "./db/connection.js";
 
 /**
  * ContextService provides three layered read methods for agents:
@@ -38,7 +38,7 @@ export class ContextService {
     }
 
     const plan: ExecutionPlan = {
-      steps: workflowResult.rows[0].planned_steps,
+      steps: workflowResult.rows[0]!.planned_steps,
       reasoning: "Workflow context",
     };
 
@@ -78,9 +78,9 @@ export class ContextService {
 
     const recentTurns: ConversationTurn[] = conversationResult.rows
       .reverse()
-      .map((row) => ({
+      .map((row: { id: string; role: string; content: string; created_at: string }) => ({
         turn_id: row.id,
-        role: row.role,
+        role: row.role as "user" | "assistant",
         content: row.content,
         created_at: row.created_at,
       }));
@@ -126,7 +126,7 @@ export class ContextService {
       [embeddingStr, k]
     );
 
-    return result.rows.map((row) => ({
+    return result.rows.map((row: { id: string; workflow_id: string; summary: string; similarity: number; created_at: string }) => ({
       id: row.id,
       workflow_id: row.workflow_id,
       summary: row.summary,
@@ -204,7 +204,7 @@ export class ContextService {
       throw new Error(`No confidence threshold found for agent type: ${agentType}`);
     }
 
-    return result.rows[0].threshold;
+    return result.rows[0]!.threshold;
   }
 }
 
