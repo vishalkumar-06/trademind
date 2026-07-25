@@ -1,1 +1,2 @@
-// TODO: implement context-engine — see build plan for the relevant phase
+export { ContextService, contextService } from "./context-service.js";
+export { initializeDatabase, getPool, query, closeDatabase } from "./db/connection.js";
