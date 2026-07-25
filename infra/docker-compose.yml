@@ -1,0 +1,42 @@
+version: "3.9"
+
+# Phase 0 infra: nothing else in the build order can start until this exists.
+# Postgres carries pgvector for the Persistent Context Engine (structural + semantic recall).
+# Redis carries ephemeral workflow state, the ingress queue, and pub/sub for dashboard updates.
+
+services:
+  postgres:
+    image: pgvector/pgvector:pg16
+    container_name: trademind-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-trademind}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-trademind_dev_password}
+      POSTGRES_DB: ${POSTGRES_DB:-trademind}
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - trademind_pg_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-trademind} -d ${POSTGRES_DB:-trademind}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  redis:
+    image: redis:7-alpine
+    container_name: trademind-redis
+    restart: unless-stopped
+    ports:
+      - "${REDIS_PORT:-6379}:6379"
+    volumes:
+      - trademind_redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  trademind_pg_data:
+  trademind_redis_data:

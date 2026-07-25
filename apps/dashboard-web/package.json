@@ -1,0 +1,9 @@
+{
+  "name": "@trademind/dashboard-web",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Trader Dashboard frontend (Phase 7) — React + TypeScript, reads ONLY from the Context Engine per TDD §4.5",
+  "scripts": {
+    "dev": "echo 'TODO: scaffold with Vite in Phase 7'"
+  }
+}

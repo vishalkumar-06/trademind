@@ -1,0 +1,29 @@
+{
+  "name": "trademind-ai",
+  "private": true,
+  "version": "0.1.0",
+  "description": "TradeMind AI \u2014 multi-agent trading copilot (Planner \u2192 Specialized Agents \u2192 MCP Tool Layer \u2192 Persistent Context Engine \u2192 Trader Dashboard)",
+  "workspaces": [
+    "packages/*",
+    "services/*",
+    "services/mcp-servers/*",
+    "services/agents/*",
+    "apps/*"
+  ],
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "scripts": {
+    "build": "npm run build --workspaces --if-present",
+    "lint": "npm run lint --workspaces --if-present",
+    "test": "npm run test --workspaces --if-present",
+    "infra:up": "docker compose -f infra/docker-compose.yml up -d",
+    "infra:down": "docker compose -f infra/docker-compose.yml down",
+    "infra:logs": "docker compose -f infra/docker-compose.yml logs -f",
+    "migrate": "npm run migrate --workspace=@trademind/context-engine"
+  },
+  "devDependencies": {
+    "typescript": "^5.5.4",
+    "@types/node": "^20.14.10"
+  }
+}

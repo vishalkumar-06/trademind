@@ -1,0 +1,20 @@
+{
+  "name": "@trademind/trade-reconciliation-agent",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Specialized agent (Phase 3, or Phase 5/8 for challenger/calibration) — see build plan §6",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc -b",
+    "dev": "echo 'TODO: implement trade-reconciliation-agent'",
+    "lint": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@trademind/shared-types": "*"
+  },
+  "devDependencies": {
+    "typescript": "^5.5.4"
+  }
+}
