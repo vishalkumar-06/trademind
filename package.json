@@ -27,7 +27,8 @@
     "dev:market-agent": "npm run dev --workspace=@trademind/market-intelligence-agent",
     "dev:compliance-agent": "npm run dev --workspace=@trademind/compliance-agent",
     "dev:communication-agent": "npm run dev --workspace=@trademind/communication-agent",
-    "dev:challenger-agent": "npm run dev --workspace=@trademind/challenger-agent"
+    "dev:challenger-agent": "npm run dev --workspace=@trademind/challenger-agent",
+    "dev:planner": "npm run dev --workspace=@trademind/planner"
   },
   "devDependencies": {
     "@types/node": "^20.14.10",

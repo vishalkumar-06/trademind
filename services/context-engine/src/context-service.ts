@@ -5,7 +5,10 @@ import {
   RecommendationHistoryEntry,
   ExecutionPlan,
   ExecutionStep,
+  UserRequest,
+  WorkflowStatus,
 } from "@trademind/shared-types";
+import { v4 as uuidv4 } from "uuid";
 import { query } from "./db/connection.js";
 
 /**
@@ -205,6 +208,96 @@ export class ContextService {
     }
 
     return result.rows[0]!.threshold;
+  }
+
+  /**
+   * Create a user request row — entry point for the Planner (Phase 4).
+   */
+  async createUserRequest(userId: string, rawText: string): Promise<UserRequest> {
+    const id = uuidv4();
+    const now = new Date().toISOString();
+
+    await query(
+      `INSERT INTO user_requests (id, user_id, raw_text, status, created_at, updated_at)
+       VALUES ($1, $2, $3, 'in_progress', $4, $4)`,
+      [id, userId, rawText, now]
+    );
+
+    return { id, user_id: userId, raw_text: rawText, status: "in_progress", created_at: now };
+  }
+
+  /**
+   * Create an execution workflow with a planned step list from the Planner.
+   */
+  async createWorkflow(
+    requestId: string,
+    plan: ExecutionPlan
+  ): Promise<{ id: string; request_id: string; planned_steps: ExecutionStep[]; status: WorkflowStatus }> {
+    const id = uuidv4();
+    const now = new Date().toISOString();
+
+    await query(
+      `INSERT INTO execution_workflows (id, request_id, planned_steps, current_step, status, created_at, updated_at)
+       VALUES ($1, $2, $3, 0, 'in_progress', $4, $4)`,
+      [id, requestId, JSON.stringify(plan.steps), now]
+    );
+
+    return {
+      id,
+      request_id: requestId,
+      planned_steps: plan.steps,
+      status: "in_progress",
+    };
+  }
+
+  /**
+   * Update workflow status and optional current step index.
+   */
+  async updateWorkflow(
+    workflowId: string,
+    status: WorkflowStatus,
+    currentStep?: number
+  ): Promise<void> {
+    const now = new Date().toISOString();
+
+    if (currentStep !== undefined) {
+      await query(
+        `UPDATE execution_workflows SET status = $1, current_step = $2, updated_at = $3 WHERE id = $4`,
+        [status, currentStep, now, workflowId]
+      );
+    } else {
+      await query(
+        `UPDATE execution_workflows SET status = $1, updated_at = $2 WHERE id = $3`,
+        [status, now, workflowId]
+      );
+    }
+  }
+
+  /**
+   * Update the parent user request status when a workflow finishes.
+   */
+  async updateUserRequestStatus(requestId: string, status: WorkflowStatus): Promise<void> {
+    const now = new Date().toISOString();
+    await query(
+      `UPDATE user_requests SET status = $1, updated_at = $2 WHERE id = $3`,
+      [status, now, requestId]
+    );
+  }
+
+  /**
+   * Append a conversation turn for multi-turn context (Planner writes user + assistant turns).
+   */
+  async appendConversationTurn(
+    userId: string,
+    workflowId: string,
+    role: "user" | "assistant",
+    content: string
+  ): Promise<void> {
+    await query(
+      `INSERT INTO conversation_history (user_id, workflow_id, role, content, created_at)
+       VALUES ($1, $2, $3, $4, $5)`,
+      [userId, workflowId, role, content, new Date().toISOString()]
+    );
   }
 }
 

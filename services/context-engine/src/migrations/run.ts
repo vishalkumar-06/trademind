@@ -29,6 +29,23 @@ export async function runMigrations(): Promise<void> {
     }
   }
 
+  const seedsPath = join(__dirname, "../db/seeds.sql");
+  const seedsSql = readFileSync(seedsPath, "utf-8");
+  const seedStatements = seedsSql
+    .split(";")
+    .map((stmt) => stmt.trim())
+    .filter((stmt) => stmt.length > 0);
+
+  for (const statement of seedStatements) {
+    try {
+      await query(statement);
+    } catch (error) {
+      console.error("✗ Seed error:", error);
+      throw error;
+    }
+  }
+  console.log("✓ Confidence threshold seeds applied");
+
   console.log("✓ All migrations completed successfully");
   await closeDatabase();
 }
