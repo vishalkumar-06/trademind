@@ -3,6 +3,7 @@ import express from "express";
 import { McpApplicationFactory } from "@nitrostack/core";
 import { AppModule } from "./app.module.js";
 import { SlackTools } from "./tools.js";
+export { SlackTools };
 import { toMCPError } from "./mcp-utils.js";
 
 /**

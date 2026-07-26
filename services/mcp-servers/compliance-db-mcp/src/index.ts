@@ -3,6 +3,7 @@ import express from "express";
 import { McpApplicationFactory } from "@nitrostack/core";
 import { AppModule } from "./app.module.js";
 import { ComplianceDbTools } from "./tools.js";
+export { ComplianceDbTools };
 import { toMCPError } from "./mcp-utils.js";
 
 /**

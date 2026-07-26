@@ -1,0 +1,34 @@
+{
+  "name": "@trademind/unified-mcp",
+  "version": "0.1.0",
+  "private": true,
+  "description": "TradeMind AI — Unified NitroStack MCP Gateway Server (combines all 6 domain tool modules into a single process for NitroStudio & single-terminal execution)",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc -b",
+    "dev": "node --loader ts-node/esm src/index.ts",
+    "start": "node dist/index.js",
+    "lint": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@nitrostack/core": "^1.0.0",
+    "@trademind/portfolio-mcp": "*",
+    "@trademind/market-data-mcp": "*",
+    "@trademind/risk-engine-mcp": "*",
+    "@trademind/trade-records-mcp": "*",
+    "@trademind/compliance-db-mcp": "*",
+    "@trademind/slack-mcp": "*",
+    "@trademind/shared-types": "*",
+    "dotenv": "^16.4.5",
+    "reflect-metadata": "^0.2.2",
+    "uuid": "^9.0.1",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@types/node": "^20.14.10",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.5.4"
+  }
+}

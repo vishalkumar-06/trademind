@@ -3,6 +3,7 @@ import express from "express";
 import { McpApplicationFactory } from "@nitrostack/core";
 import { AppModule } from "./app.module.js";
 import { TradeRecordsTools } from "./tools.js";
+export { TradeRecordsTools };
 import { toMCPError } from "./mcp-utils.js";
 
 /**

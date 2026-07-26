@@ -32,11 +32,20 @@
     "dev:ingress-bus": "npm run dev --workspace=@trademind/ingress-bus",
     "dev:planner": "npm run dev --workspace=@trademind/planner",
     "dev:dashboard-api": "npm run dev --workspace=@trademind/dashboard-api",
-    "dev:dashboard-web": "npm run dev --workspace=@trademind/dashboard-web"
+    "dev:dashboard-web": "npm run dev --workspace=@trademind/dashboard-web",
+    "dev:portfolio-mcp": "npm run dev --workspace=@trademind/portfolio-mcp",
+    "dev:market-data-mcp": "npm run dev --workspace=@trademind/market-data-mcp",
+    "dev:risk-engine-mcp": "npm run dev --workspace=@trademind/risk-engine-mcp",
+    "dev:trade-records-mcp": "npm run dev --workspace=@trademind/trade-records-mcp",
+    "dev:compliance-db-mcp": "npm run dev --workspace=@trademind/compliance-db-mcp",
+    "dev:slack-mcp": "npm run dev --workspace=@trademind/slack-mcp",
+    "dev:mcp-unified": "npm run dev --workspace=@trademind/unified-mcp",
+    "dev:mcp-all": "concurrently -n portfolio,market,risk,records,compliance,slack -c blue,green,yellow,magenta,cyan,gray \"npm run dev:portfolio-mcp\" \"npm run dev:market-data-mcp\" \"npm run dev:risk-engine-mcp\" \"npm run dev:trade-records-mcp\" \"npm run dev:compliance-db-mcp\" \"npm run dev:slack-mcp\""
   },
   "devDependencies": {
     "@types/node": "^20.14.10",
     "@types/uuid": "^10.0.0",
+    "concurrently": "^8.2.2",
     "typescript": "^5.5.4"
   },
   "dependencies": {
