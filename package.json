@@ -28,7 +28,11 @@
     "dev:compliance-agent": "npm run dev --workspace=@trademind/compliance-agent",
     "dev:communication-agent": "npm run dev --workspace=@trademind/communication-agent",
     "dev:challenger-agent": "npm run dev --workspace=@trademind/challenger-agent",
-    "dev:planner": "npm run dev --workspace=@trademind/planner"
+    "dev:confidence-gate": "npm run dev --workspace=@trademind/confidence-gate",
+    "dev:ingress-bus": "npm run dev --workspace=@trademind/ingress-bus",
+    "dev:planner": "npm run dev --workspace=@trademind/planner",
+    "dev:dashboard-api": "npm run dev --workspace=@trademind/dashboard-api",
+    "dev:dashboard-web": "npm run dev --workspace=@trademind/dashboard-web"
   },
   "devDependencies": {
     "@types/node": "^20.14.10",

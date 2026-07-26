@@ -7,6 +7,7 @@ import {
   ExecutionStep,
   UserRequest,
   WorkflowStatus,
+  TraderDecision,
 } from "@trademind/shared-types";
 import { v4 as uuidv4 } from "uuid";
 import { query } from "./db/connection.js";
@@ -204,10 +205,70 @@ export class ContextService {
     );
 
     if (result.rows.length === 0) {
-      throw new Error(`No confidence threshold found for agent type: ${agentType}`);
+      // Return default thresholds if database table is unpopulated
+      const defaults: Record<string, number> = {
+        compliance: 0.90,
+        communication: 0.80,
+        portfolio: 0.85,
+        risk: 0.85,
+        market: 0.85,
+        reconciliation: 0.85,
+      };
+      return defaults[agentType] ?? 0.85;
     }
 
     return result.rows[0]!.threshold;
+  }
+
+  /**
+   * Perform a versioned insert of a new confidence threshold (never overwrite).
+   */
+  async insertConfidenceThreshold(
+    agentType: string,
+    threshold: number,
+    changedBy: string = "calibration_agent",
+    changeReason: string | null = null
+  ): Promise<void> {
+    const id = uuidv4();
+    const now = new Date().toISOString();
+
+    await query(
+      `INSERT INTO confidence_thresholds (id, agent_type, threshold, effective_from, changed_by, change_reason)
+       VALUES ($1, $2, $3, $4, $5, $6)`,
+      [id, agentType, threshold, now, changedBy, changeReason]
+    );
+  }
+
+  /**
+   * Store a trader decision in trader_decisions table.
+   */
+  async recordTraderDecision(decision: TraderDecision): Promise<void> {
+    await query(
+      `INSERT INTO trader_decisions (id, workflow_id, decision, modifications, trader_id, reasoning, created_at)
+       VALUES ($1, $2, $3, $4, $5, $6, $7)`,
+      [
+        decision.id,
+        decision.workflow_id,
+        decision.decision,
+        decision.modifications ? JSON.stringify(decision.modifications) : null,
+        decision.trader_id,
+        decision.reasoning || null,
+        decision.created_at,
+      ]
+    );
+  }
+
+  /**
+   * Get recent trader decisions for calibration analysis.
+   */
+  async getTraderDecisions(limit: number = 100): Promise<TraderDecision[]> {
+    const result = await query<TraderDecision>(
+      `SELECT id, workflow_id, decision, modifications, trader_id, reasoning, created_at
+       FROM trader_decisions ORDER BY created_at DESC LIMIT $1`,
+      [limit]
+    );
+
+    return result.rows;
   }
 
   /**

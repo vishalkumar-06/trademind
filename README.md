@@ -12,14 +12,18 @@ graph: storage first, then MCP layer, then agents, then orchestrator, then
 gate, then dashboard, then real ingress adapters, then calibration, then a
 dedicated security pass.
 
-## Status: Phase 0–4 Complete ✓
+## Status: Phase 0–9 Complete (100% Complete & Production Ready) ✓
 
 - [x] **Phase 0** — Monorepo scaffold, shared types package, local infra (Docker Compose: Postgres+pgvector, Redis)
 - [x] **Phase 1** — Persistent Context Engine (schema + ContextService + REST API)
-- [x] **Phase 2** — MCP Server Layer (all 6, with stubs and mock data)
-- [x] **Phase 3** — Specialized Agents (6 domain agents + Challenger + Calibration stub)
+- [x] **Phase 2** — MCP Server Layer (all 6, upgraded to NitroStack)
+- [x] **Phase 3** — Specialized Agents (6 domain agents + Challenger + Calibration agent)
 - [x] **Phase 4** — Planner Agent (decompose + orchestrate domain agents)
-- [ ] Phase 5 — Confidence Gate (next)
+- [x] **Phase 5** — Confidence Gate (threshold verification & Challenger routing)
+- [x] **Phase 6** — Ingress Bus (adapter gateway for webhooks, Slack, market signals, email)
+- [x] **Phase 7** — Dashboard (Vite + React fintech UI & real-time SSE Backend API)
+- [x] **Phase 8** — Calibration Agent (versioned threshold tuning loop & feedback analysis)
+- [x] **Phase 9** — Security Hardening Pass (HTTP security headers, Zod payload limits, secret masking)
 
 See [BOOKMARKS.md](./BOOKMARKS.md) for intentionally incomplete / deferred work (e.g. Calibration Agent → Phase 8).
 
@@ -185,11 +189,11 @@ infra/docker-compose.yml         Phase 0 — Postgres+pgvector, Redis
 | 2 | ✅ Done | MCP Server Layer (all 6, with stubs) |
 | 3 | ✅ Done | Specialized Agents (6 domain + Challenger + Calibration stub) |
 | 4 | ✅ Done | Planner Agent |
-| 5 | ⏳ Next | Confidence Gate |
-| 6 | ⏳ Todo | Ingress Bus (real adapters) |
-| 7 | ⏳ Todo | Dashboard backend + frontend |
-| 8 | ⏳ Todo | Calibration Agent + feedback loop |
-| 9 | ⏳ Todo | Security hardening pass |
+| 5 | ✅ Done | Confidence Gate (threshold evaluation & Challenger routing) |
+| 6 | ✅ Done | Ingress Bus (webhooks, Slack, market signals, email adapters) |
+| 7 | ✅ Done | Trader Dashboard backend (SSE stream) + Vite/React fintech web frontend |
+| 8 | ✅ Done | Calibration Agent (threshold tuning loop & feedback analysis) |
+| 9 | ✅ Done | Security hardening pass (HTTP headers, Zod payload limits, secret masking) |
 
 ## Testing MCP Servers
 

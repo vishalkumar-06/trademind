@@ -6,7 +6,14 @@ import { v4 as uuidv4 } from "uuid";
 const app = express();
 const port = parseInt(process.env.PORT || "3001");
 
-app.use(express.json());
+// Phase 9 Security Middleware
+app.use((_req, res, next) => {
+  res.setHeader("X-Content-Type-Options", "nosniff");
+  res.setHeader("X-Frame-Options", "DENY");
+  res.setHeader("X-XSS-Protection", "1; mode=block");
+  next();
+});
+app.use(express.json({ limit: "1mb" }));
 
 /**
  * Health check endpoint
@@ -203,6 +210,50 @@ app.get("/context/threshold/:agentType", async (req, res) => {
     const asOf = req.query.asOf ? new Date(req.query.asOf as string) : new Date();
     const threshold = await contextService.getConfidenceThreshold(agentType, asOf);
     res.json({ agentType, threshold, asOf });
+  } catch (error) {
+    res.status(400).json({ error: String(error) });
+  }
+});
+
+/**
+ * POST /context/threshold
+ * Insert a versioned confidence threshold row
+ */
+app.post("/context/threshold", async (req, res) => {
+  try {
+    const { agentType, threshold, changedBy, changeReason } = req.body;
+    if (!agentType || typeof threshold !== "number") {
+      return res.status(400).json({ error: "agentType and numeric threshold are required" });
+    }
+    await contextService.insertConfidenceThreshold(agentType, threshold, changedBy, changeReason);
+    res.json({ success: true, agentType, threshold });
+  } catch (error) {
+    res.status(400).json({ error: String(error) });
+  }
+});
+
+/**
+ * POST /context/decision
+ * Record a trader decision in trader_decisions
+ */
+app.post("/context/decision", async (req, res) => {
+  try {
+    await contextService.recordTraderDecision(req.body);
+    res.json({ success: true, id: req.body.id });
+  } catch (error) {
+    res.status(400).json({ error: String(error) });
+  }
+});
+
+/**
+ * GET /context/decisions
+ * Retrieve recent trader decisions for calibration analysis
+ */
+app.get("/context/decisions", async (req, res) => {
+  try {
+    const limit = req.query.limit ? parseInt(req.query.limit as string) : 100;
+    const decisions = await contextService.getTraderDecisions(limit);
+    res.json({ decisions });
   } catch (error) {
     res.status(400).json({ error: String(error) });
   }

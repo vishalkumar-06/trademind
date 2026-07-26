@@ -2,8 +2,23 @@
   "name": "@trademind/dashboard-web",
   "version": "0.1.0",
   "private": true,
-  "description": "Trader Dashboard frontend (Phase 7) — React + TypeScript, reads ONLY from the Context Engine per TDD §4.5",
+  "description": "TradeMind AI — Premium Fintech Trader Copilot Dashboard (Phase 7)",
+  "type": "module",
   "scripts": {
-    "dev": "echo 'TODO: scaffold with Vite in Phase 7'"
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "lucide-react": "^0.395.0"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.3",
+    "@types/react-dom": "^18.3.0",
+    "@vitejs/plugin-react": "^4.3.1",
+    "typescript": "^5.5.4",
+    "vite": "^5.3.1"
   }
 }
