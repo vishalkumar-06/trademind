@@ -12,13 +12,16 @@ graph: storage first, then MCP layer, then agents, then orchestrator, then
 gate, then dashboard, then real ingress adapters, then calibration, then a
 dedicated security pass.
 
-## Status: Phase 0–3 Complete ✓
+## Status: Phase 0–4 Complete ✓
 
 - [x] **Phase 0** — Monorepo scaffold, shared types package, local infra (Docker Compose: Postgres+pgvector, Redis)
 - [x] **Phase 1** — Persistent Context Engine (schema + ContextService + REST API)
 - [x] **Phase 2** — MCP Server Layer (all 6, with stubs and mock data)
 - [x] **Phase 3** — Specialized Agents (6 domain agents + Challenger + Calibration stub)
-- [ ] Phase 4 — Planner Agent (next)
+- [x] **Phase 4** — Planner Agent (decompose + orchestrate domain agents)
+- [ ] Phase 5 — Confidence Gate (next)
+
+See [BOOKMARKS.md](./BOOKMARKS.md) for intentionally incomplete / deferred work (e.g. Calibration Agent → Phase 8).
 
 ## Getting started
 
@@ -43,6 +46,9 @@ npm run dev --workspace=@trademind/risk-engine-mcp
 npm run dev --workspace=@trademind/trade-records-mcp
 npm run dev --workspace=@trademind/compliance-db-mcp
 npm run dev --workspace=@trademind/slack-mcp
+
+# Terminal 8: Planner (Phase 4)
+npm run dev:planner
 ```
 
 Check infra health:
@@ -73,7 +79,35 @@ Core storage and context retrieval for all agents.
 - `POST /context/memory/search` - Semantic search via pgvector
 - `POST /context/assemble` - Assemble complete context object for agent
 - `POST /context/agent-result` - Write agent result to storage
+- `POST /context/request` - Create user request (Planner)
+- `POST /context/workflow` - Create execution workflow with plan (Planner)
+- `PATCH /context/workflow/:workflowId` - Update workflow status (Planner)
+- `POST /context/conversation` - Append conversation turn (Planner)
 - `GET /context/threshold/:agentType` - Get current confidence threshold
+
+### Phase 4: Planner Agent (Port 3300)
+
+Orchestrates the full agent pipeline: decompose → persist → execute.
+
+**Endpoints:**
+- `GET /health` - Health check
+- `POST /decompose` - Decompose `raw_text` into an `ExecutionPlan` (no execution)
+- `POST /execute` - Create request + workflow, run all planned agent steps
+- `GET /workflow/:workflowId` - Workflow plan + agent results so far
+
+**Example: run a full workflow**
+
+```bash
+curl -X POST http://localhost:3300/execute \
+  -H "Content-Type: application/json" \
+  -d '{
+    "user_id": "550e8400-e29b-41d4-a716-446655440000",
+    "raw_text": "Should I buy 100 shares of AAPL? Check risk and compliance first.",
+    "payload": { "symbol": "AAPL", "quantity": 100 }
+  }'
+```
+
+Requires Context Engine + relevant domain agents running. Uses Claude for decomposition when `ANTHROPIC_API_KEY` is set; otherwise rule-based fallback.
 
 ### Phase 2: MCP Server Layer
 All 6 MCP servers follow the same standardized shape (build plan §5.2):
@@ -150,8 +184,8 @@ infra/docker-compose.yml         Phase 0 — Postgres+pgvector, Redis
 | 1 | ✅ Done | Persistent Context Engine (schema + `ContextService`) |
 | 2 | ✅ Done | MCP Server Layer (all 6, with stubs) |
 | 3 | ✅ Done | Specialized Agents (6 domain + Challenger + Calibration stub) |
-| 4 | ⏳ Next | Planner Agent |
-| 5 | ⏳ Todo | Confidence Gate |
+| 4 | ✅ Done | Planner Agent |
+| 5 | ⏳ Next | Confidence Gate |
 | 6 | ⏳ Todo | Ingress Bus (real adapters) |
 | 7 | ⏳ Todo | Dashboard backend + frontend |
 | 8 | ⏳ Todo | Calibration Agent + feedback loop |

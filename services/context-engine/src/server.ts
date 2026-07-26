@@ -116,6 +116,84 @@ app.post("/context/agent-result", async (req, res) => {
 });
 
 /**
+ * POST /context/request
+ * Create a user request (Planner entry point)
+ * Body: { userId: string, rawText: string }
+ */
+app.post("/context/request", async (req, res) => {
+  try {
+    const { userId, rawText } = req.body;
+    if (!userId || !rawText) {
+      return res.status(400).json({ error: "userId and rawText are required" });
+    }
+    const request = await contextService.createUserRequest(userId, rawText);
+    res.status(201).json(request);
+  } catch (error) {
+    res.status(400).json({ error: String(error) });
+  }
+});
+
+/**
+ * POST /context/workflow
+ * Create an execution workflow with planned steps
+ * Body: { requestId: string, plan: ExecutionPlan }
+ */
+app.post("/context/workflow", async (req, res) => {
+  try {
+    const { requestId, plan } = req.body;
+    if (!requestId || !plan?.steps) {
+      return res.status(400).json({ error: "requestId and plan.steps are required" });
+    }
+    const workflow = await contextService.createWorkflow(requestId, plan);
+    res.status(201).json(workflow);
+  } catch (error) {
+    res.status(400).json({ error: String(error) });
+  }
+});
+
+/**
+ * PATCH /context/workflow/:workflowId
+ * Update workflow status and optional current step
+ * Body: { status: WorkflowStatus, currentStep?: number, requestId?: string }
+ */
+app.patch("/context/workflow/:workflowId", async (req, res) => {
+  try {
+    const { workflowId } = req.params;
+    const { status, currentStep, requestId } = req.body;
+    if (!status) {
+      return res.status(400).json({ error: "status is required" });
+    }
+    await contextService.updateWorkflow(workflowId, status, currentStep);
+    if (requestId) {
+      await contextService.updateUserRequestStatus(requestId, status);
+    }
+    res.json({ success: true });
+  } catch (error) {
+    res.status(400).json({ error: String(error) });
+  }
+});
+
+/**
+ * POST /context/conversation
+ * Append a conversation turn
+ * Body: { userId, workflowId, role, content }
+ */
+app.post("/context/conversation", async (req, res) => {
+  try {
+    const { userId, workflowId, role, content } = req.body;
+    if (!userId || !workflowId || !role || !content) {
+      return res.status(400).json({
+        error: "userId, workflowId, role, and content are required",
+      });
+    }
+    await contextService.appendConversationTurn(userId, workflowId, role, content);
+    res.json({ success: true });
+  } catch (error) {
+    res.status(400).json({ error: String(error) });
+  }
+});
+
+/**
  * GET /context/threshold/:agentType
  * Get the current confidence threshold for an agent type
  */
